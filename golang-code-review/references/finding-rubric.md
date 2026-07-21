@@ -10,8 +10,8 @@ Every specialist finding must be **actionable and evidenced**. Thin findings get
 | `location` | `path:line` or `path` + symbol; `diff-hunk` if line unknown |
 | `issue` | One sentence: what is wrong **in this code** |
 | `recommendation` | Concrete change (not "consider improving") |
-| `example` | Short Go before/after or corrected snippet |
-| `id` | Optional: `#N` (100 Go Mistakes), CWE-xx, or rule name |
+| `example` | Short Go before/after or corrected snippet (tests: sketch with `t.Run` / table row OK) |
+| `id` | Optional: `#N` (100 Go Mistakes), Cheney post title, CWE-xx, or rule name |
 
 ## Quality bar
 
@@ -75,6 +75,15 @@ At least 5 concrete checks tied to the diff (files/symbols), not generic slogans
 |----------|-------------------|
 | Can this corrupt data or leak another tenant? | high/critical |
 | Will `-race` or production load likely trip it? | high |
+| Behavior change with no/weak test for the new path? | medium (tests lens) |
 | Is it a boundary leak without current exploit? | medium |
 | Is it style/docs only? | nit |
 | Are you guessing? | low + speculative |
+
+## Paste buckets (for evaluator / parent)
+
+| Severity | Paste section |
+|----------|----------------|
+| critical, high | Must address |
+| medium | Should address |
+| low, nit | Nits (optional; max 5) |

@@ -72,7 +72,7 @@ type OrderRepository interface {
 
 Prefer:
 
-- Packages named by **domain capability** (`billing`, `shipment`) over catch-all `models`/`utils` (#13)
+- Packages named by **domain capability** (`billing`, `shipment`) over catch-all `models`/`utils` (#13) — Cheney: [Avoid package names like base, util, or common](https://dave.cheney.net/2019/01/08/avoid-package-names-like-base-util-or-common)
 - Clear ownership; avoid circular imports (symptom of blurred boundaries)
 - Exported surface minimal; doc comments on exports (#15)
 

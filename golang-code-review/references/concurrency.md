@@ -2,7 +2,7 @@
 
 Hunt races, leaks, ownership bugs, and context misuse. Prefer evidence (`go test -race`, clear shared state) over vibes.
 
-Public anchors: [Go memory model](https://go.dev/ref/mem), [race detector](https://go.dev/doc/articles/race_detector), [context package](https://pkg.go.dev/context), *100 Go Mistakes* #55–#74.
+Public anchors: [Go memory model](https://go.dev/ref/mem), [race detector](https://go.dev/doc/articles/race_detector), [context package](https://pkg.go.dev/context), *100 Go Mistakes* #55–#74, Cheney [Never start a goroutine…](https://dave.cheney.net/2016/12/22/never-start-a-goroutine-without-knowing-how-it-will-stop).
 
 ## Triage order
 
@@ -155,9 +155,11 @@ go func() {
 
 ## Testing concurrent code (#83, #86)
 
-- Require `-race` for packages that start goroutines
-- Ban `time.Sleep` as synchronization (#86); use channels, barriers, or `goleak`
-- Consider [goleak](https://github.com/uber-go/goleak) for leak assertions in tests
+Production races/leaks are **this** lens. Missing `-race` in CI, Sleep-as-sync in `_test.go`, and goleak gaps are owned by the **tests** lens ([testing.md](testing.md)) — mention once if you see them, or leave to tests to avoid dupes.
+
+- Treat `-race` hits in app code as **high/critical**
+- Ban `time.Sleep` as synchronization in production wait logic; same smell in tests → tests lens (#86)
+- Cheney: [Never start a goroutine without knowing how it will stop](https://dave.cheney.net/2016/12/22/never-start-a-goroutine-without-knowing-how-it-will-stop)
 
 ---
 

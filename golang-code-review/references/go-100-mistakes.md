@@ -134,6 +134,8 @@ Primary public index: [100go.co](https://100go.co/) (Teiva Harsanyi, *100 Go Mis
 
 ## Testing (#82–#90)
 
+**Primary owner:** `tests` lens — see [testing.md](testing.md) and Cheney [Prefer table driven tests](https://dave.cheney.net/2019/05/07/prefer-table-driven-tests). Quality agents should not dump these; cite `#N` from the tests agent.
+
 | # | Mistake | Look for / ask |
 |---|---------|----------------|
 | 82 | Not categorizing tests | Heavy tests always run; no short/tags |
@@ -170,8 +172,10 @@ Only raise when hot path, alloc-sensitive, or author claims performance.
 1. Errors (#48–#54), resources (#79), HTTP defaults (#81)
 2. Concurrency (#58–#74), slice/map sharing (#25–#28, #69–#70)
 3. Interfaces/organization (#5–#7, #12–#13)
-4. Tests for concurrent/IO changes (#83–#86)
+4. Tests for concurrent/IO changes (#83–#86) — **tests** lens
 5. Optimizations (#91–#100) only with evidence
+
+Quality agents: prioritize #1–#54 and #75–#81; leave #82–#90 to **tests** unless noting a single cross-link.
 
 ## Citation format
 
