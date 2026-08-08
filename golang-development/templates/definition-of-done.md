@@ -10,7 +10,7 @@
 | Module / Go version | _from go.mod_ |
 | Mode | full / lite |
 | Date | _YYYY-MM-DD_ |
-| Evidence | _go vet / go test -race / govulncheck: ran \| skipped (why)_ |
+| Evidence | _golangci-lint or staticcheck / go vet / go test -race / govulncheck: ran \| skipped (why)_ |
 | Status | _done \| blocked (why)_ |
 
 ## Summary

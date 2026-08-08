@@ -4,23 +4,25 @@
 
 ---
 
-<!--
-### F-YYYYMMDD-01 — <short title>
+### F-20260115-01 — example: order create vs billing client drift
 
 | | |
 |--|--|
-| Type | bug \| drift |
-| Status | open \| mitigated \| resolved |
+| Type | drift |
+| Status | open |
 | Services | serviceA, serviceB |
-| Edge | E1 (optional map id) |
-| Severity | high \| medium \| low |
-| Date | YYYY-MM-DD |
+| Edge | E1 |
+| Severity | high |
+| Date | 2026-01-15 |
 
-**What:** …
+**What:** `serviceA` made `priority` required on `POST /v1/orders`; `serviceB` billing client still omits the field.
 
-**Impact:** …
+**Impact:** `serviceB` requests fail validation or billing runs with wrong defaults.
 
-**Evidence:** paths, symptoms, failing test…
+**Evidence:** `serviceA/internal/api/order.go`; `serviceB/internal/client/orders.go`
 
-**Follow-up:** paired fix / ack / monitor…
--->
+**Follow-up:** Update `serviceB` client + tests; mark mitigated when merged.
+
+---
+
+<!-- Copy the block above for new findings. Prefer real IDs: F-YYYYMMDD-NN -->

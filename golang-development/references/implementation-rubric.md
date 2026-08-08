@@ -1,6 +1,6 @@
 # Implementation rubric
 
-Every gap from a lens advisor (or self-check) must be **actionable and evidenced**. Thin notes get rejected — fix Must/Should items before claiming done.
+Every gap from a self-check must be **actionable and evidenced**. Thin notes get rejected — fix Must/Should items before claiming done.
 
 ## Required fields
 
@@ -90,7 +90,7 @@ At least 5 concrete checks tied to the change (files/symbols), not generic sloga
 
 ## Definition of done (implementation)
 
-- [ ] Engaged lenses checked (self or advisors)
+- [ ] Engaged lenses self-checked
 - [ ] All Must + Should gaps fixed in code
 - [ ] `go vet` / `go test -race` / `govulncheck` run on changed packages (or noted skip reason)
 - [ ] Behavior change has a failing-if-reverted test

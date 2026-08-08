@@ -2,7 +2,7 @@
 
 Primary public index: [100go.co](https://100go.co/) (Teiva Harsanyi, *100 Go Mistakes and How to Avoid Them*). Use `#N` when choosing designs or documenting gaps. This file is a **build cue sheet**, not a substitute for the book.
 
-**Required:** Read this file for **every** Go implementation session (progressive disclosure exception). Other skill references stay gated.
+**When to read:** full mode ? scan the sections matching the change. In light mode use [go-100-priority.md](go-100-priority.md) instead, and come here only when a priority row points at a deeper section.
 
 **How to use:** Scan the sections that match what you are writing. Avoid each mistake; prefer patterns that prevent bugs/leaks over pure style.
 

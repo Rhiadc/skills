@@ -2,13 +2,10 @@
 name: context-discovery
 description: >-
   Use whenever the workspace is a multi-service root (any number of first-level
-  folders — Go microservices and/or infra) and the agent needs service context,
-  interaction maps, planning, cross-service development, debugging across
-  services, or checking contract drift. Always prefer the workspace-root
-  context-brain over reading every service repo. Use before implementation
-  plans, during Go microservice work that may touch neighbors, and after
-  finishing jobs that change APIs/events/config — update the brain and log
-  bugs/drift in findings.
+  Go microservice and/or infra folders) and the agent needs service interaction
+  context, cross-service planning, neighbor-aware development, multi-service
+  debugging, or contract drift awareness. Prefer the workspace-root
+  context-brain over reading every service repo.
 ---
 
 # Context Discovery
@@ -154,8 +151,10 @@ Bugs and drift in `findings.md`. Status: `open` | `mitigated` | `resolved`. Do n
 
 ## Coupling with other skills
 
-- Multi-service plan/dev: this skill first → then e.g. `golang-development` for Go implementation.
-- Brain = **what talks to what**. Go skill = **how to implement safely**.
+- Multi-service plan/dev: this skill first → then `golang-development` for Go implementation.
+- Multi-service PR review: skim brain, then `golang-code-review`.
+- Brain = **what talks to what**. Go skills = **how to implement / review** code.
+- Go discoveries log to `.cursor/golang-discoveries.md` (golang-development) — not into `context-brain/`.
 
 ## Done means
 

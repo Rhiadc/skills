@@ -23,14 +23,16 @@ Multi-agent Go review grounded in *100 Go Mistakes*, official Go docs, [Dave Che
 - Non-Go changes (or Go is incidental generated stubs only)
 - User wants a one-line opinion on a single snippet (answer in chat; skip multi-agent)
 - Skill not attached — do not auto-invoke
+- User wants code written → `golang-development`
 
 ## Workflow
 
 ```
 Review Progress:
-- [ ] Scope + mode (full | lite)
-- [ ] Evidence: vet / test -race / govulncheck on changed packages
-- [ ] Spawn specialists in parallel (Task tool)
+- [ ] Scope + mode (full | lite); obtain the actual diff
+- [ ] Optional: context brain if multi-service PR
+- [ ] Evidence: lint / vet / test -race / govulncheck on changed packages
+- [ ] Spawn specialists in parallel (sequential fallback if Task unavailable)
 - [ ] Collect findings (reject thin; re-ask once if needed)
 - [ ] Spawn final-evaluator
 - [ ] Parent writes review file from template
@@ -39,7 +41,9 @@ Review Progress:
 
 ### 1. Scope + mode
 
-Target: PR, branch diff, uncommitted changes, or named paths. Ask once if unclear. Prefer `git diff` / PR files over whole-repo reads.
+Target: PR, branch diff, uncommitted changes, or named paths. Ask once if unclear.
+
+**Obtain the actual diff** (`git diff`, `git diff main...HEAD`, or `gh pr diff`) and pass the file list plus hunks or a faithful summary to every specialist. Prefer the diff over whole-repo reads.
 
 **Full mode** (default when unsure): all five specialists.
 
@@ -47,7 +51,10 @@ Target: PR, branch diff, uncommitted changes, or named paths. Ask once if unclea
 
 - Run `quality` + `tests` + `security` only
 - Skip `architecture` and `concurrency` unless the diff clearly engages them
+- `quality` may use [go-100-priority.md](references/go-100-priority.md) instead of the full catalog
 - Still run final-evaluator on whatever returned
+
+**Multi-service PRs:** if the workspace root has `context-brain/`, skim its `index.md` + `map.md` and the in-scope service sections (see `context-discovery`) before judging cross-service contract changes.
 
 Record in the report:
 
@@ -57,7 +64,10 @@ Record in the report:
 
 ### 2. Evidence (parent agent)
 
+Prefer the repo's lint entrypoint when present, matching what `golang-development` runs:
+
 ```bash
+golangci-lint run ./<changed>/...   # or: staticcheck ./<changed>/...
 go vet ./<changed>/...
 go test -race ./<changed>/...      # note if skipped
 govulncheck ./<changed>/...        # note if skipped / not installed
@@ -67,7 +77,9 @@ Attach command output summaries under **Meta**. Do not block forever on slow tes
 
 ### 3. Specialists in parallel
 
-Launch with the **Task** tool in one turn (parallel). Same scope for each. Each **must read** its reference(s) and [finding-rubric.md](references/finding-rubric.md).
+Launch with the **Task** tool in one turn (parallel). Same scope and diff for each. Each **must read** its reference(s) and [finding-rubric.md](references/finding-rubric.md).
+
+**If the Task tool is unavailable**, run the lenses sequentially in-process with the same prompts and references, and note "sequential fallback" under Meta. Do not silently drop lenses.
 
 | Agent | Lens | Must read |
 |-------|------|-----------|
@@ -97,10 +109,11 @@ Read and follow: <reference paths>
 Also follow: <abs>/references/finding-rubric.md
 
 Rules:
+- Base every finding on the actual diff provided (hunks/paths, or run git show). Do not review unrelated files.
 - Only this lens. No drive-by style nits outside the lens.
 - Every finding needs: severity, location (path:line), issue, recommendation, example (Go snippet or before/after), and when applicable mistake_id (#N), Cheney post, or cwe/rule id.
 - Prefer concrete evidence from the diff over hypotheticals. Mark speculative items severity=low and label "speculative".
-- If the change clearly engages this lens but you find nothing: say "No issues" AND list what you checked (5–10 bullets tied to files/symbols).
+- If the change clearly engages this lens but you find nothing: say "No issues" AND list what you checked (5–10 bullets tied to files/symbols in the diff).
 - Rank findings critical → nit. Cap nits at 5.
 - Return findings using the Accept field shape from the rubric (so the parent can merge).
 ```
@@ -113,7 +126,7 @@ One agent after specialists return. Inputs = full specialist outputs + Meta evid
 
 ```
 You synthesize Go review lenses into one coherent merge.
-Inputs: quality, tests, security, architecture, concurrency (whichever ran) + vet/race/govulncheck notes.
+Inputs: quality, tests, security, architecture, concurrency (whichever ran) + lint/vet/race/govulncheck notes.
 
 Rules:
 - Deduplicate; keep highest severity + richest recommendation
@@ -157,27 +170,29 @@ Must include: per-lens sections + Synthesis, `path:line`, recommendation, exampl
 ## Hard rules
 
 - Prefer [go.dev](https://go.dev/doc/) / Effective Go / Go memory model / [Code Review Comments](https://go.dev/wiki/CodeReviewComments) over folklore
-- Secondary: [Dave Cheney](https://dave.cheney.net/) via [dave-cheney.md](references/dave-cheney.md) — cite post titles, don’t paste long excerpts
+- Secondary: [Dave Cheney](https://dave.cheney.net/) via [dave-cheney.md](references/dave-cheney.md) — cite post titles, don't paste long excerpts
 - Quality findings cite `#N` from [go-100-mistakes.md](references/go-100-mistakes.md) when they map; tests cite `#82`–`#90` when they map
 - Do not invent APIs or packages not in the code
 - Huge scope → prioritize changed files; list out-of-scope explicitly
 - Never auto-invoke
-- Specialists in **parallel** unless the user asks otherwise
+- Specialists in **parallel** unless the user asks otherwise or Task is unavailable
 
 ## Common failure modes
 
 | Rationalization | Counter |
 |-----------------|---------|
+| Review from memory without the diff | Obtain the diff and pass it to every specialist |
 | Skip empty-lens checklist | Reject; re-ask that lens once |
-| Architecture demands full DDD on a tiny fix | Follow architecture-ddd “When NOT” |
+| Architecture demands full DDD on a tiny fix | Follow architecture-ddd "When NOT" |
 | Thin finding, fix later | Rubric reject — no entry without example |
-| Run specialists one-by-one | Parallel Task launches required |
-| Missing test is always “nit” | Behavior change without test → at least **medium** |
+| Task tool missing, so skip lenses | Sequential in-process fallback |
+| Missing test is always "nit" | Behavior change without test → at least **medium** |
 | Quality agent also dumps test nits | Hand off to `tests` lens |
 
 ## Additional resources
 
 - [references/go-100-mistakes.md](references/go-100-mistakes.md)
+- [references/go-100-priority.md](references/go-100-priority.md)
 - [references/testing.md](references/testing.md)
 - [references/concurrency.md](references/concurrency.md)
 - [references/security.md](references/security.md)
