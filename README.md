@@ -8,7 +8,7 @@ Install a skill once under `~/.cursor/skills/`; Cursor can then use it in any pr
 
 ## Skills
 
-### [golang-development](skills/golang-development/)
+### [golang-development](golang-development/)
 
 Teaches the agent how to **write and change Go code** well.
 
@@ -20,7 +20,7 @@ Teaches the agent how to **write and change Go code** well.
 
 Use when implementing features, fixing bugs, refactoring, or executing a plan that touches Go.
 
-### [golang-code-review](skills/golang-code-review/)
+### [golang-code-review](golang-code-review/)
 
 Runs a structured **Go code review** (quality, tests, security, architecture, concurrency) and writes a review markdown deliverable.
 
@@ -29,7 +29,7 @@ Runs a structured **Go code review** (quality, tests, security, architecture, co
 
 Use when you ask for a PR/diff/code review of Go, not when you want code written.
 
-### [context-discovery](skills/context-discovery/)
+### [context-discovery](context-discovery/)
 
 Maintains a **context brain** at the **workspace root** for any number of sibling folders (Go microservices, infra, etc. — N is not fixed).
 
@@ -43,19 +43,51 @@ Use in multi-service workspace roots for planning, development context, and cros
 
 ---
 
-## Install (macOS / Linux)
+## Install
 
-Cursor loads personal skills from `~/.cursor/skills/<skill-name>/`.
+From this repo root, run the install script. Default installs the three skills above into `~/.cursor/skills` via **symlink** (so `git pull` updates them).
 
-From **this repo’s root**, symlink (recommended — `git pull` keeps skills updated):
+### macOS / Linux
 
 ```bash
-mkdir -p ~/.cursor/skills
-
-ln -sfn "$(pwd)/skills/golang-development" ~/.cursor/skills/golang-development
-ln -sfn "$(pwd)/skills/golang-code-review" ~/.cursor/skills/golang-code-review
-ln -sfn "$(pwd)/skills/context-discovery" ~/.cursor/skills/context-discovery
+chmod +x install.sh
+./install.sh
 ```
+
+### Windows (PowerShell)
+
+```powershell
+.\install.ps1
+```
+
+If symlink creation fails without elevation, the script falls back to a directory junction.
+
+### Useful options
+
+```bash
+# List skills
+./install.sh --list
+
+# One skill only
+./install.sh context-discovery
+
+# Copy instead of symlink (snapshot; re-run after pull to refresh)
+./install.sh --copy
+
+# Install into a single project instead of global
+./install.sh --dest /path/to/your-app/.cursor/skills
+```
+
+PowerShell equivalents:
+
+```powershell
+.\install.ps1 -List
+.\install.ps1 context-discovery
+.\install.ps1 -Mode copy
+.\install.ps1 -Dest C:\path\to\your-app\.cursor\skills
+```
+
+Then restart Cursor or open a new Agent chat.
 
 Verify:
 
@@ -63,35 +95,6 @@ Verify:
 ls ~/.cursor/skills/golang-development/SKILL.md
 ls ~/.cursor/skills/golang-code-review/SKILL.md
 ls ~/.cursor/skills/context-discovery/SKILL.md
-```
-
-Restart Cursor or open a new Agent chat.
-
-### Install only one skill
-
-```bash
-ln -sfn "$(pwd)/skills/context-discovery" ~/.cursor/skills/context-discovery
-```
-
-### Copy instead of symlink
-
-Snapshot that does not track the repo:
-
-```bash
-mkdir -p ~/.cursor/skills
-cp -R skills/golang-development ~/.cursor/skills/
-cp -R skills/golang-code-review ~/.cursor/skills/
-cp -R skills/context-discovery ~/.cursor/skills/
-```
-
-Re-run `cp` after you pull changes you want locally.
-
-### One project only (not global)
-
-```bash
-mkdir -p /path/to/your-app/.cursor/skills
-cp -R skills/golang-development /path/to/your-app/.cursor/skills/
-# repeat for other skills as needed
 ```
 
 ---
@@ -112,11 +115,11 @@ workspace-root/
     findings.md             # bugs + drift
 ```
 
-On first use, the agent seeds `context-brain/` from `skills/context-discovery/templates/`. Commit that folder at the workspace root so sessions share the same map.
+On first use, the agent seeds `context-brain/` from `context-discovery/templates/`. Commit that folder at the workspace root so sessions share the same map.
 
 ---
 
 ## Notes
 
 - Install into `~/.cursor/skills/`, never `~/.cursor/skills-cursor/` (Cursor built-ins).
-- Windows: `%USERPROFILE%\.cursor\skills\` (same layout; symlink or copy).
+- Override destination with `--dest` / `-Dest` or env `CURSOR_SKILLS_DIR`.
