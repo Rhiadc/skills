@@ -11,6 +11,7 @@
 | Mode | full / lite |
 | Date | _YYYY-MM-DD_ |
 | Evidence | _golangci-lint or staticcheck / go vet / go test -race / govulncheck: ran \| skipped (why)_ |
+| Docs | _updated: paths_ \| _no docs impact (why)_ |
 | Status | _done \| blocked (why)_ |
 
 ## Summary
@@ -88,6 +89,22 @@ _Skip if lite and no goroutines/shared state._
 
 ---
 
+## Docs
+
+_Same gate as lint and tests: a change that alters exported API, contracts, config, or operations is not done until the docs match._
+
+### Checks
+
+- [ ] New/changed exported identifiers have doc comments starting with the name
+- [ ] Package doc / README updated when usage or setup changed
+- [ ] Contract docs match the code (OpenAPI, proto, event schema, migrations)
+- [ ] New config, env vars, flags, and defaults documented
+- [ ] Operational change has a runbook or rollout note
+- [ ] `context-brain/` updated when service interactions changed
+- [ ] Or: **No docs impact** — one line saying why (internal refactor, no surface change)
+
+---
+
 ## Gaps remaining (optional)
 
 | ID | Severity | Lens | Location | Fix / defer reason |
@@ -104,4 +121,5 @@ _Skip if lite and no goroutines/shared state._
 
 - Any **Must** (critical/high) open → not done
 - Open **Should** (medium) → default fix before handoff
+- Stale docs for a changed contract, config, or exported API → at least **Should**
 - Only nits left → done (optional polish)

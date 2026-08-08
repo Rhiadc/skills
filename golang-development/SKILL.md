@@ -39,6 +39,7 @@ Write idiomatic, safe Go. **This file is the always-on core**; everything else i
 | Mistakes catalog | [go-100-priority.md](references/go-100-priority.md) | Matching sections of [go-100-mistakes.md](references/go-100-mistakes.md) |
 | Other references | Only if a gate fires | Every matching gate |
 | Evidence | lint + vet + tests; `-race` if the package is already concurrent | lint + vet + `test -race`; `govulncheck` when new deps or security surface |
+| Docs | doc comments on changed exported API | + README, contract (OpenAPI/proto/events), and config docs |
 | Rubric / DoD | skip | rubric if large/risky; DoD if the user asks |
 
 ## Always-on standards
@@ -51,6 +52,7 @@ Write idiomatic, safe Go. **This file is the always-on core**; everything else i
 - No request identity in package globals; no string-built SQL; timeouts on new HTTP servers and clients
 - Interfaces at the consumer; return concrete types; avoid new `utils`/`common` packages
 - Behavior change gets a test that fails if reverted (table-driven + `t.Run` when ≥2 cases)
+- Docs move with the code: doc comments on changed exported identifiers, and README, contract, or config docs whenever those surfaces change
 - Smallest change that solves the ask; do not invent APIs; cite `#N` when a catalog row guided the design
 - Prefer [go.dev](https://go.dev/doc/) / Effective Go / [Code Review Comments](https://go.dev/wiki/CodeReviewComments); repo style wins for formatting
 
@@ -63,7 +65,8 @@ Development Progress:
 - [ ] Orient: go.mod + neighboring code
 - [ ] Open gated references if needed
 - [ ] Implement + tests
-- [ ] Evidence
+- [ ] Evidence: lint / vet / tests
+- [ ] Docs updated, or state no docs impact
 - [ ] After finish: discoveries (optional)
 - [ ] Done
 ```
@@ -80,6 +83,21 @@ govulncheck ./<changed>/...         # full + (new deps or security surface)
 ```
 
 Failing lint, vet, or tests means not done. Note tool skips honestly.
+
+### Docs check (same gate)
+
+Before claiming done, name which docs the change touches, or say there is no docs impact and why:
+
+| Changed | Update |
+|---------|--------|
+| Exported identifier added or changed | Doc comment starting with the identifier name |
+| Usage, setup, or commands | Package doc / README |
+| HTTP, gRPC, or event contract | OpenAPI / proto / schema docs, and consumers if the contract broke |
+| Config, env vars, flags, defaults | Config docs and example files |
+| Operational behavior | Runbook or rollout note |
+| Service interactions in a multi-service root | `context-brain/` via context-discovery |
+
+Stale docs for a changed contract, config, or exported API block done the same way a failing test does. Pure internal refactors usually have no docs impact — say so instead of skipping the question.
 
 ## Reference gates
 
@@ -113,7 +131,7 @@ After the job, if something reusable was learned, open [discoveries-workflow.md]
 
 ## Done means
 
-Mode chosen deliberately; always-on standards held; only needed references loaded; evidence green or skips noted; behavior changes covered by tests; discoveries proposed or explicitly none.
+Mode chosen deliberately; always-on standards held; only needed references loaded; evidence green or skips noted; behavior changes covered by tests; docs updated or no docs impact stated; discoveries proposed or explicitly none.
 
 ## Common failure modes
 
@@ -123,5 +141,6 @@ Mode chosen deliberately; always-on standards held; only needed references loade
 | Stay light after adding a worker or public API | Escalate and open the gates |
 | Preload every reference | Gates only |
 | "It compiles" means done | Lint + vet + tests required |
+| Ship the code, document it later | Docs are part of done; stale contract or config docs block it |
 | Log discoveries inside the skill | Use `.cursor/golang-discoveries.md` |
 | Skip neighbor context on multi-service work | Use context-discovery first |

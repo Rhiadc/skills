@@ -92,5 +92,6 @@ At least 5 concrete checks tied to the change (files/symbols), not generic sloga
 
 - [ ] Engaged lenses self-checked
 - [ ] All Must + Should gaps fixed in code
-- [ ] `go vet` / `go test -race` / `govulncheck` run on changed packages (or noted skip reason)
+- [ ] Lint / `go vet` / `go test -race` / `govulncheck` run on changed packages (or noted skip reason)
 - [ ] Behavior change has a failing-if-reverted test
+- [ ] Docs match the code: doc comments on changed exported API, plus README, contract, and config docs when those changed (or "no docs impact" stated)
